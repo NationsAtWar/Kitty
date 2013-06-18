@@ -1,0 +1,7 @@
+/bin
+/.settings
+/.git
+.classpath
+.project
+.gitignore
+*.jardesc
