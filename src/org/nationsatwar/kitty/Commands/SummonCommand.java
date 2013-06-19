@@ -4,7 +4,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.nationsatwar.kitty.Kitty;
-import org.nationsatwar.kitty.Sumo;
+import org.nationsatwar.kitty.Sumo.Sumo;
 
 public final class SummonCommand {
 
@@ -28,7 +28,7 @@ public final class SummonCommand {
 		
 		Entity entity = player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
 		
-		Sumo sumo = new Sumo(entity, player);
+		Sumo sumo = new Sumo(plugin, entity, player);
 		
 		plugin.sumoManager.addSumo(player.getName(), sumo);
 	}

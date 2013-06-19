@@ -2,7 +2,7 @@ package org.nationsatwar.kitty.Commands;
 
 import org.bukkit.entity.Player;
 import org.nationsatwar.kitty.Kitty;
-import org.nationsatwar.kitty.Sumo;
+import org.nationsatwar.kitty.Sumo.Sumo;
 
 public final class BeckonCommand {
 

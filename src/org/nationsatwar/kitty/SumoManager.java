@@ -2,6 +2,8 @@ package org.nationsatwar.kitty;
 
 import java.util.HashMap;
 
+import org.nationsatwar.kitty.Sumo.Sumo;
+
 public final class SumoManager {
 
 	protected final Kitty plugin;

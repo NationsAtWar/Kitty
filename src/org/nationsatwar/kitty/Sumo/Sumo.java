@@ -1,4 +1,4 @@
-package org.nationsatwar.kitty;
+package org.nationsatwar.kitty.Sumo;
 
 import net.minecraft.server.v1_5_R3.EntityLiving;
 import net.minecraft.server.v1_5_R3.PathEntity;
@@ -7,19 +7,26 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.nationsatwar.kitty.Kitty;
 
 public final class Sumo {
 	
+	protected Kitty plugin;
 	private final Entity entity;
-	
 	private Player master;
+	
+	public BehaviorController behaviorController;
 	
 	private float speed = 0.3f;
 	
-	public Sumo(Entity entity, Player master) {
+	public Sumo(Kitty plugin, Entity entity, Player master) {
 		
+		this.plugin = plugin;
 		this.entity = entity;
 		this.master = master;
+    	
+		behaviorController = new BehaviorController(plugin, this);
+		behaviorController.runTaskTimer(plugin, 0, 20);
 	}
 	
 	// Getters
