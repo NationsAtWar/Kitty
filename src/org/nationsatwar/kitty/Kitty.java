@@ -3,6 +3,7 @@ package org.nationsatwar.kitty;
 import java.util.logging.Logger;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.nationsatwar.kitty.Utility.CommandParser;
 
 /**
  * The iSpy parent class.
@@ -14,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class Kitty extends JavaPlugin {
 	
 	public final CommandParser commandParser = new CommandParser(this);;
+	public final SumoManager sumoManager = new SumoManager(this);
 	
 	private static final Logger log = Logger.getLogger("Minecraft");
 
