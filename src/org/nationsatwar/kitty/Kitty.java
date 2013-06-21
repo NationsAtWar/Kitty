@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.nationsatwar.kitty.Events.DeathEvents;
 import org.nationsatwar.kitty.Events.TargetEvents;
 import org.nationsatwar.kitty.Utility.CommandParser;
+import org.nationsatwar.kitty.Utility.ConfigHandler;
 
 /**
  * The iSpy parent class.
@@ -25,6 +26,9 @@ public final class Kitty extends JavaPlugin {
 	 * Initializes the plugin on server startup.
 	 */
 	public void onEnable() {
+		
+		// Creates all the default Sumos packaged with the plugin
+		ConfigHandler.createDefaultSumoFiles();
 		
     	// Register Events
 		getServer().getPluginManager().registerEvents(new DeathEvents(this), this);

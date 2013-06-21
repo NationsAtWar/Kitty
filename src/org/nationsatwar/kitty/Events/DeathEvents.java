@@ -5,7 +5,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import org.nationsatwar.kitty.Kitty;
-import org.nationsatwar.kitty.Sumo.Sumo;
+import org.nationsatwar.kitty.Sumo.SumoObject;
 
 public final class DeathEvents implements Listener {
 	
@@ -19,9 +19,12 @@ public final class DeathEvents implements Listener {
     @EventHandler
     private void onEntityDeath(EntityDeathEvent event) {
     	
-    	Sumo sumo = plugin.sumoManager.getPlayerSumo("Aculem");
-    	
-    	if (sumo.getEntity().equals(event.getEntity()))
-    		sumo.behaviorController.cancel();
+    	// Cancels behavior controller if the killed entity is a Sumo
+    	for (SumoObject sumo : plugin.sumoManager.getAllSumos())
+    		if (sumo.getEntity().equals(event.getEntity())) {
+    			
+    			sumo.behaviorController.cancel();
+    			return;
+    		}
     }
 }

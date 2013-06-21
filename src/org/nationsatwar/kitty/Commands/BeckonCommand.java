@@ -2,7 +2,7 @@ package org.nationsatwar.kitty.Commands;
 
 import org.bukkit.entity.Player;
 import org.nationsatwar.kitty.Kitty;
-import org.nationsatwar.kitty.Sumo.Sumo;
+import org.nationsatwar.kitty.Sumo.SumoObject;
 
 public final class BeckonCommand {
 
@@ -24,8 +24,7 @@ public final class BeckonCommand {
 	 */
 	public final void execute(Player player) {
 		
-		Sumo sumo = plugin.sumoManager.getPlayerSumo(player.getName());
-		
-		sumo.setPath(player.getLocation());
+		for (SumoObject sumo : plugin.sumoManager.getPlayerSumos(player.getName()))
+			sumo.setPath(player.getLocation());
 	}
 }

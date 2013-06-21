@@ -1,10 +1,17 @@
 package org.nationsatwar.kitty.Commands;
 
+import java.io.File;
+
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
 import org.nationsatwar.kitty.Kitty;
-import org.nationsatwar.kitty.Sumo.Sumo;
+import org.nationsatwar.kitty.Sumo.SumoObject;
+import org.nationsatwar.kitty.Utility.ConfigHandler;
 
 public final class SummonCommand {
 
@@ -18,18 +25,38 @@ public final class SummonCommand {
 	/**
 	 * Handles the 'Summon' command.
 	 * <p>
-	 * Will create a new trigger for the developer to manipulate. This will create a config file
-	 * in the '(worldname)/triggers/' directory.
+	 * Creates a new Sumo as specified from the (sumoName).yml FileConfiguration
 	 * 
 	 * @param player  Person sending the command
-	 * @param entityName  The entity to spawn
+	 * @param sumoName  The name of the Sumo to spawn
 	 */
-	public final void execute(Player player, String entityName) {
+	public final void execute(Player player, String sumoName) {
 		
-		Entity entity = player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
+		sumoName = sumoName.toLowerCase();
 		
-		Sumo sumo = new Sumo(plugin, entity, player);
+	    File sumoFile = new File(ConfigHandler.getFullSumoPath(sumoName));
+	    
+	    // Returns if the sumoFile does not exist
+	    if (!sumoFile.exists()) {
+	    	
+	    	player.sendMessage(ChatColor.YELLOW + "Sumo: " + sumoName + " does not exist. Please try again.");
+	    	return;
+	    }
+	    
+	    FileConfiguration sumoConfig = YamlConfiguration.loadConfiguration(sumoFile);
+	    
+	    EntityType entityType = EntityType.fromName(sumoConfig.getString(ConfigHandler.sumoEntityType));
 		
+	    // Returns if the Entity Type as specified in the config file is invalid
+		if (entityType == null) {
+	    	
+	    	player.sendMessage(ChatColor.YELLOW + "Entity Type for: " + sumoName + "does not exist.");
+	    	return;
+		}
+		
+		Entity entity = player.getWorld().spawnEntity(player.getLocation(), entityType);
+		
+		SumoObject sumo = new SumoObject(plugin, entity, player, sumoName);
 		plugin.sumoManager.addSumo(player.getName(), sumo);
 	}
 }

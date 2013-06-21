@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import org.nationsatwar.kitty.Kitty;
 import org.nationsatwar.kitty.Commands.BeckonCommand;
+import org.nationsatwar.kitty.Commands.ReloadCommand;
 import org.nationsatwar.kitty.Commands.SummonCommand;
 
 public final class CommandParser implements CommandExecutor {
@@ -16,11 +17,13 @@ public final class CommandParser implements CommandExecutor {
 
 	private final SummonCommand summonCommand;
 	private final BeckonCommand beckonCommand;
+	private final ReloadCommand reloadCommand;
 	
 	public CommandParser(Kitty plugin) {
 		
 		summonCommand = new SummonCommand(plugin);
 		beckonCommand = new BeckonCommand(plugin);
+		reloadCommand = new ReloadCommand(plugin);
 		
 		this.plugin = plugin;
 	}
@@ -32,13 +35,17 @@ public final class CommandParser implements CommandExecutor {
 		if (args.length == 0 || args[0].equals("help"))
 			helpCommand(sender);
 		
-		// -kitty summon
+		// -kitty summon [sumoName]
 		else if (args[0].equals("summon"))
 			spawnCommand(sender, args);
 		
-		// -kitty beckon
+		// -kitty beckon [sumoName]
 		else if (args[0].equals("beckon"))
 			beckonCommand(sender, args);
+		
+		// -kitty reload [sumoName]
+		else if (args[0].equals("reload"))
+			reloadCommand(sender, args);
 		
 		// -kitty <non-applicable command>
 		else {
@@ -95,7 +102,7 @@ public final class CommandParser implements CommandExecutor {
 	}
 
 	/**
-	 * Returns help and parses the 'Spawn' command for execution.
+	 * Returns help and parses the 'Beckon' command for execution.
 	 * 
 	 * @param sender  Person sending the command
 	 * @param args  String of arguments associated with the command
@@ -119,6 +126,30 @@ public final class CommandParser implements CommandExecutor {
 		
 		// Execute Create Command
 		beckonCommand.execute(player);
+	}
+
+	/**
+	 * Returns help and parses the 'Reload' command for execution.
+	 * 
+	 * @param sender  Person sending the command
+	 * @param args  String of arguments associated with the command
+	 */
+	private void reloadCommand(CommandSender sender, String[] args) {
+
+		if (args.length > 1 && args[1].equals("help")) {
+			
+			sender.sendMessage(ChatColor.DARK_RED + "[Nations at War]" + ChatColor.DARK_AQUA + " -=[RELOAD]=-");
+			sender.sendMessage(ChatColor.DARK_AQUA + "i.e. '/ispy reload [sumo]");
+			sender.sendMessage(ChatColor.YELLOW + "Reloads config properties for the selected sumo; " + 
+			"reloads all if empty.");
+			return;
+		}
+		
+		// Stores the full entity name
+		String sumoName = getRemainingString(1, args);
+		
+		// Execute Create Command
+		reloadCommand.execute(sumoName);
 	}
 
 	/**

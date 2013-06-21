@@ -1,6 +1,10 @@
 package org.nationsatwar.kitty.Sumo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -9,22 +13,36 @@ import org.nationsatwar.kitty.Kitty;
 public class BehaviorController extends BukkitRunnable {
 	
 	protected Kitty plugin;
-	private final Sumo sumo;
+	private final SumoObject sumo;
 	
-	private boolean engaged = false;
+	private List<EntityType> hostileTypes;
 	
-	public BehaviorController(Kitty plugin, Sumo sumo) {
+	private int maxEngageDistance = 24;
+	
+	public BehaviorController(Kitty plugin, SumoObject sumo) {
 		
 		this.plugin = plugin;
 		this.sumo = sumo;
+		
+		hostileTypes = new ArrayList<EntityType>();
+
+		hostileTypes.add(EntityType.BLAZE);
+		hostileTypes.add(EntityType.CAVE_SPIDER);
+		hostileTypes.add(EntityType.CREEPER);
+		hostileTypes.add(EntityType.ENDER_DRAGON);
+		hostileTypes.add(EntityType.ENDERMAN);
+		hostileTypes.add(EntityType.GHAST);
+		hostileTypes.add(EntityType.PIG_ZOMBIE);
+		hostileTypes.add(EntityType.SKELETON);
+		hostileTypes.add(EntityType.SPIDER);
+		hostileTypes.add(EntityType.WITHER);
+		hostileTypes.add(EntityType.ZOMBIE);
 	}
 	
 	// Timer is ran every second here
 	public void run() {
 		
-		Kitty.log("What what: " + engaged);
-		
-		if (!engaged)
+		if (!sumo.isEngaged)
 			moveToPlayer();
 		
 		attackNearbyEnemies();
@@ -39,14 +57,21 @@ public class BehaviorController extends BukkitRunnable {
 	private void attackNearbyEnemies() {
 
 		Entity closestEntity = null;
-		double distance = 100;
+		double distance = maxEngageDistance;
 		
-		for (Entity entity : sumo.getEntity().getNearbyEntities(10, 10, 10)) {
-			
-			if (entity.equals((Entity) sumo.getMaster()))
+		// Gets the closest entity to the Sumo's master
+		for (Entity entity : sumo.getMaster().getNearbyEntities(maxEngageDistance, maxEngageDistance, maxEngageDistance)) {
+						
+			if (!hostileTypes.contains(entity.getType()))
 				continue;
 			
-			double checkDistance = entity.getLocation().distance(sumo.getEntity().getLocation());
+			if (entity.equals((Entity) sumo.getMaster()) || entity.equals(sumo.getEntity()))
+				continue;
+			
+			if (!((LivingEntity) entity).hasLineOfSight(sumo.getMaster()))
+				continue;
+			
+			double checkDistance = entity.getLocation().distance(sumo.getMaster().getLocation());
 			
 			if (checkDistance < distance) {
 				
@@ -55,20 +80,9 @@ public class BehaviorController extends BukkitRunnable {
 			}
 		}
 		
-		if (closestEntity == null) {
-			
-			engaged = false;
-			return;
-		}
+		sumo.targetEntity(closestEntity);
 		
-		if (closestEntity instanceof LivingEntity) {
-		
-			engaged = true;
-			
-			sumo.setPath(closestEntity.getLocation());
-			
-			if (distance < 2)
-				((LivingEntity) closestEntity).damage(4, sumo.getEntity());
-		}
+		if (distance < sumo.getAttackRange())
+			((LivingEntity) closestEntity).damage(sumo.getAttackDamage(), sumo.getEntity());
 	}
 }
