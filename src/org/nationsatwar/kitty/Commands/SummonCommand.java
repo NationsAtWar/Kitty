@@ -3,6 +3,7 @@ package org.nationsatwar.kitty.Commands;
 import java.io.File;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import org.nationsatwar.kitty.Kitty;
 import org.nationsatwar.kitty.Sumo.SumoObject;
+import org.nationsatwar.kitty.Utility.AIUtility;
 import org.nationsatwar.kitty.Utility.ConfigHandler;
 
 public final class SummonCommand {
@@ -54,7 +56,9 @@ public final class SummonCommand {
 	    	return;
 		}
 		
-		Entity entity = player.getWorld().spawnEntity(player.getLocation(), entityType);
+		Location spawnLocation = AIUtility.randomizeLocation(player.getLocation(), 5);
+		
+		Entity entity = player.getWorld().spawnEntity(spawnLocation, entityType);
 		
 		SumoObject sumo = new SumoObject(plugin, entity, player, sumoName);
 		plugin.sumoManager.addSumo(player.getName(), sumo);

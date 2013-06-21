@@ -1,0 +1,13 @@
+name: Kitty
+main: org.nationsatwar.kitty.Kitty
+version: 1.0
+
+commands:
+  kitty:
+    description: Displays all Kitty commands.
+    permission: iSpy.basic
+    usage: /<command>
+    
+permissions:
+  kitty.*:
+    description: Gives access to all Kitty commands
