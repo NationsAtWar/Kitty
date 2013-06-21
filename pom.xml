@@ -17,6 +17,11 @@
 	</dependency>
 	<dependency>
 		<groupId>org.bukkit</groupId>
+		<artifactId>craftbukkit</artifactId>
+		<version>1.5.2-R1.0</version>
+	</dependency>
+	<dependency>
+		<groupId>org.bukkit</groupId>
 		<artifactId>minecraft-server</artifactId>
 		<version>1.5</version>
 	</dependency>
