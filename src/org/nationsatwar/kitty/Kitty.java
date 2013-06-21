@@ -3,7 +3,7 @@ package org.nationsatwar.kitty;
 import java.util.logging.Logger;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.nationsatwar.kitty.Events.DeathEvents;
+import org.nationsatwar.kitty.Events.DamageEvents;
 import org.nationsatwar.kitty.Events.TargetEvents;
 import org.nationsatwar.kitty.Utility.CommandParser;
 import org.nationsatwar.kitty.Utility.ConfigHandler;
@@ -31,7 +31,7 @@ public final class Kitty extends JavaPlugin {
 		ConfigHandler.createDefaultSumoFiles();
 		
     	// Register Events
-		getServer().getPluginManager().registerEvents(new DeathEvents(this), this);
+		getServer().getPluginManager().registerEvents(new DamageEvents(this), this);
 		getServer().getPluginManager().registerEvents(new TargetEvents(this), this);
 		
 		// Set Command Executor

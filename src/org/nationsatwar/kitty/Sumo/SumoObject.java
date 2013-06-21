@@ -36,6 +36,8 @@ public final class SumoObject {
 	
 	public boolean isEngaged = false;
 	
+	private int maxHealth;
+	
 	private float movementSpeed;
 	private float attackRange;
 	
@@ -52,10 +54,6 @@ public final class SumoObject {
 		behaviorController = new BehaviorController(plugin, this);
 		behaviorController.runTaskTimer(plugin, 0, 20);
 		
-		EntityLiving livingEntity = ((CraftLivingEntity) entity).getHandle();
-		
-		livingEntity.setHealth(15);
-		
 		loadConfigProperties();
 	}
 	
@@ -68,6 +66,16 @@ public final class SumoObject {
 	public Player getMaster() {
 		
 		return master;
+	}
+	
+	public String getSumoName() {
+		
+		return sumoName;
+	}
+	
+	public float getMaxHealth() {
+		
+		return maxHealth;
 	}
 	
 	public float getMovementSpeed() {
@@ -85,9 +93,10 @@ public final class SumoObject {
 		return attackDamage;
 	}
 	
-	public String getSumoName() {
-		
-		return sumoName;
+	public int getCurrentHealth() {
+
+		EntityLiving livingEntity = ((CraftLivingEntity) entity).getHandle();
+		return livingEntity.getHealth();
 	}
 	
 	// Setters
@@ -102,6 +111,21 @@ public final class SumoObject {
 	}
 	
 	/**
+	 * Adds health to the Sumo, maxes out at max health
+	 * 
+	 * @param newHealth
+	 */
+	public void replenishHealth(int newHealth) {
+
+		EntityLiving livingEntity = ((CraftLivingEntity) entity).getHandle();
+		
+		if (livingEntity.getHealth() < (maxHealth - newHealth))
+			livingEntity.setHealth(livingEntity.getHealth() + newHealth);
+		else
+			livingEntity.setHealth(maxHealth);
+	}
+	
+	/**
 	 * Loads the Sumo's properties as specified by the Config file
 	 */
 	public void loadConfigProperties() {
@@ -109,11 +133,14 @@ public final class SumoObject {
 		File sumoFile = new File(ConfigHandler.getFullSumoPath(sumoName));
 	    FileConfiguration sumoConfig = YamlConfiguration.loadConfiguration(sumoFile);
 	    
-	    movementSpeed = (float) ((float) sumoConfig.getInt(ConfigHandler.statsMovementSpeed) / 100);
-	    attackRange = (float) sumoConfig.getInt(ConfigHandler.statsAttackRange);
-	    attackDamage = sumoConfig.getInt(ConfigHandler.statsAttackDamage);
+	    maxHealth = (int) sumoConfig.getDouble(ConfigHandler.healthMax);
 	    
-	    Kitty.log(movementSpeed + "");
+	    movementSpeed = (float) ((float) sumoConfig.getDouble(ConfigHandler.statsMovementSpeed) / 100);
+	    attackRange = (float) sumoConfig.getDouble(ConfigHandler.statsAttackRange);
+	    attackDamage = (int) sumoConfig.getDouble(ConfigHandler.statsAttackDamage);
+
+		EntityLiving livingEntity = ((CraftLivingEntity) entity).getHandle();
+		livingEntity.setHealth(maxHealth);
 	}
 	
 	/**

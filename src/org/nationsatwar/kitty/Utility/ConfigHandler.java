@@ -2,6 +2,8 @@ package org.nationsatwar.kitty.Utility;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.FileConfigurationOptions;
@@ -12,11 +14,18 @@ import org.nationsatwar.kitty.Kitty;
 public final class ConfigHandler {
 
 	public static final String sumoEntityType = "Entity Type";
+
+	public static final String healthMax = "Health.max";
+	public static final String healthRegeneration = "Health.regeneration";
+	public static final String healthRegenerationDelay = "Health.regenerationDelay";
 	
 	public static final String statsMovementSpeed = "Stats.movementSpeed";
 	public static final String statsAttackSpeed = "Stats.attackSpeed";
 	public static final String statsAttackRange = "Stats.attackRange";
 	public static final String statsAttackDamage = "Stats.attackDamage";
+	
+	public static final String engageRadius = "Engage.radius";
+	public static final String engageTypes = "Engage.types";
 	
 	private static final String sumoPath = "plugins/Kitty/";
 	private static final String sumoExtension = ".yml";
@@ -87,10 +96,30 @@ public final class ConfigHandler {
 	    // Creates default config parameters on creation
 	    sumoConfig.addDefault(sumoEntityType, sumoName);
 	    
+	    sumoConfig.addDefault(healthMax, 15);
+	    sumoConfig.addDefault(healthRegeneration, 1);
+	    sumoConfig.addDefault(healthRegenerationDelay, 5);
+	    
 	    sumoConfig.addDefault(statsMovementSpeed, 30);
 	    sumoConfig.addDefault(statsAttackSpeed, 30);
 	    sumoConfig.addDefault(statsAttackRange, 5);
 	    sumoConfig.addDefault(statsAttackDamage, 5);
+	    
+	    List<String> engageTypesList = new ArrayList<String>();
+	    engageTypesList.add("Blaze");
+	    engageTypesList.add("Cave_Spider");
+	    engageTypesList.add("Creeper");
+	    engageTypesList.add("Ender_Dragon");
+	    engageTypesList.add("Enderman");
+	    engageTypesList.add("Ghast");
+	    engageTypesList.add("Pig_Zombie");
+	    engageTypesList.add("Skeleton");
+	    engageTypesList.add("Spider");
+	    engageTypesList.add("Wither");
+	    engageTypesList.add("Zombie");
+	    
+	    sumoConfig.addDefault(engageRadius, 20);
+	    sumoConfig.addDefault(engageTypes, engageTypesList);
 	    
 	    sumoConfigOptions.copyDefaults(true);
 	    
