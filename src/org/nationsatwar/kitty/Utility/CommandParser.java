@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import org.nationsatwar.kitty.Kitty;
 import org.nationsatwar.kitty.Commands.BeckonCommand;
+import org.nationsatwar.kitty.Commands.OrderCommand;
 import org.nationsatwar.kitty.Commands.ReloadCommand;
 import org.nationsatwar.kitty.Commands.SummonCommand;
 
@@ -18,12 +19,14 @@ public final class CommandParser implements CommandExecutor {
 	private final SummonCommand summonCommand;
 	private final BeckonCommand beckonCommand;
 	private final ReloadCommand reloadCommand;
+	private final OrderCommand orderCommand;
 	
 	public CommandParser(Kitty plugin) {
 		
 		summonCommand = new SummonCommand(plugin);
 		beckonCommand = new BeckonCommand(plugin);
 		reloadCommand = new ReloadCommand(plugin);
+		orderCommand = new OrderCommand(plugin);
 		
 		this.plugin = plugin;
 	}
@@ -42,6 +45,10 @@ public final class CommandParser implements CommandExecutor {
 		// -kitty beckon [sumoName]
 		else if (args[0].equals("beckon"))
 			beckonCommand(sender, args);
+		
+		// -kitty order [sumoName]
+		else if (args[0].equals("order"))
+			orderCommand(sender, args);
 		
 		// -kitty reload [sumoName]
 		else if (args[0].equals("reload"))
@@ -67,8 +74,8 @@ public final class CommandParser implements CommandExecutor {
 	private void helpCommand(CommandSender sender) {
 
 		sender.sendMessage(ChatColor.DARK_RED + "[Nations at War]" + ChatColor.DARK_AQUA + " -=[KITTY]=-");
-		sender.sendMessage(ChatColor.YELLOW + "Allows you to create and manage triggers.");
-		sender.sendMessage(ChatColor.YELLOW + "Command List: Create");
+		sender.sendMessage(ChatColor.YELLOW + "Allows you to summon and control Sumos");
+		sender.sendMessage(ChatColor.YELLOW + "Command List: Summon, Beckon, Order, Reload");
 	}
 
 	/**
@@ -81,9 +88,9 @@ public final class CommandParser implements CommandExecutor {
 
 		if (args.length <= 1 || args[1].equals("help")) {
 			
-			sender.sendMessage(ChatColor.DARK_RED + "[Nations at War]" + ChatColor.DARK_AQUA + " -=[SPAWN]=-");
-			sender.sendMessage(ChatColor.DARK_AQUA + "i.e. '/ispy spawn <entity name>");
-			sender.sendMessage(ChatColor.YELLOW + "Creates a new entity.");
+			sender.sendMessage(ChatColor.DARK_RED + "[Nations at War]" + ChatColor.DARK_AQUA + " -=[SUMMON]=-");
+			sender.sendMessage(ChatColor.DARK_AQUA + "i.e. '/kitty summon <sumo name>");
+			sender.sendMessage(ChatColor.YELLOW + "Summons a new Sumo.");
 			return;
 		}
 		
@@ -112,8 +119,9 @@ public final class CommandParser implements CommandExecutor {
 		if (args.length > 1 && args[1].equals("help")) {
 			
 			sender.sendMessage(ChatColor.DARK_RED + "[Nations at War]" + ChatColor.DARK_AQUA + " -=[BECKON]=-");
-			sender.sendMessage(ChatColor.DARK_AQUA + "i.e. '/ispy beckon");
-			sender.sendMessage(ChatColor.YELLOW + "Beckons your entity to come back to you.");
+			sender.sendMessage(ChatColor.DARK_AQUA + "i.e. '/kitty beckon <sumo name>");
+			sender.sendMessage(ChatColor.YELLOW + "Beckons your Sumo to come back to you; " + 
+			"Beckons all sumos if empty.");
 			return;
 		}
 		
@@ -129,6 +137,37 @@ public final class CommandParser implements CommandExecutor {
 	}
 
 	/**
+	 * Returns help and parses the 'Order' command for execution.
+	 * 
+	 * @param sender  Person sending the command
+	 * @param args  String of arguments associated with the command
+	 */
+	private void orderCommand(CommandSender sender, String[] args) {
+
+		if (args.length > 1 && args[1].equals("help")) {
+			
+			sender.sendMessage(ChatColor.DARK_RED + "[Nations at War]" + ChatColor.DARK_AQUA + " -=[ORDER]=-");
+			sender.sendMessage(ChatColor.DARK_AQUA + "i.e. '/kitty order <sumo name>");
+			sender.sendMessage(ChatColor.YELLOW + "Gives a contextual order to your Sumo; " + 
+			"Orders all sumos if empty.");
+			return;
+		}
+		
+		// Cancel if command is sent from console
+		if (!isPlayer(sender))
+			return;
+		
+		// Gets the player sending the command
+		Player player = (Player) sender;
+		
+		// Stores the full entity name
+		String sumoName = getRemainingString(1, args);
+		
+		// Execute Create Command
+		orderCommand.execute(player, sumoName);
+	}
+
+	/**
 	 * Returns help and parses the 'Reload' command for execution.
 	 * 
 	 * @param sender  Person sending the command
@@ -141,7 +180,7 @@ public final class CommandParser implements CommandExecutor {
 			sender.sendMessage(ChatColor.DARK_RED + "[Nations at War]" + ChatColor.DARK_AQUA + " -=[RELOAD]=-");
 			sender.sendMessage(ChatColor.DARK_AQUA + "i.e. '/ispy reload [sumo]");
 			sender.sendMessage(ChatColor.YELLOW + "Reloads config properties for the selected sumo; " + 
-			"reloads all if empty.");
+			"Reloads all sumos if empty.");
 			return;
 		}
 		

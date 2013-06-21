@@ -36,6 +36,17 @@ public final class SumoManager {
 		return playerSumos.get(playerName);
 	}
 	
+	public List<SumoObject> getPlayerSumos(String playerName, String sumoName) {
+		
+		List<SumoObject> playerSumoList = new ArrayList<SumoObject>();
+		
+		for (SumoObject sumo : playerSumos.get(playerName))
+			if (sumo.getSumoName().toLowerCase().equals(sumoName))
+				playerSumoList.add(sumo);
+		
+		return playerSumoList;
+	}
+	
 	public List<SumoObject> getAllSumos() {
 		
 		List<SumoObject> sumoList = new ArrayList<SumoObject>();

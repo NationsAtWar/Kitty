@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -26,6 +27,12 @@ public class BehaviorController extends BukkitRunnable {
 	private int healthRegenerationDelay;
 	
 	private int timeSinceStruck = 0;
+	private int timeSinceOrder = 0;
+	
+	private boolean followingOrder;
+	
+	private Entity attackOrderTarget;
+	private Location moveOrderLocation;
 	
 	public BehaviorController(Kitty plugin, SumoObject sumo) {
 		
@@ -42,17 +49,50 @@ public class BehaviorController extends BukkitRunnable {
 	 */
 	public void run() {
 		
+		// Properties to adjust
 		timeSinceStruck++;
+		timeSinceOrder++;
 		
+		// Regenerate Health
 		if (timeSinceStruck >= healthRegenerationDelay)
 			sumo.replenishHealth(healthRegeneration);
 		
+		// Orders last 10 seconds (TEMPORARY)
+		if (timeSinceOrder >= 10)
+			followingOrder = false;
+		
+		// Cancel behavior if following a specified order
+		if (followingOrder) {
+			
+			if (attackOrderTarget != null && !attackOrderTarget.isDead())
+				sumo.targetEntity(attackOrderTarget);
+			else if (moveOrderLocation != null)
+				sumo.setPath(moveOrderLocation);
+			else
+				followingOrder = false;
+			
+			return;
+		}
+		
+		// Behaviors
 		if (!sumo.isEngaged)
 			moveToPlayer();
 		
 		attackNearbyEnemies();
+	}
+	
+	public void issueAttackOrder(Entity target) {
 		
-		Kitty.log("Health: " + sumo.getCurrentHealth());
+		followingOrder = true;
+		timeSinceOrder = 0;
+		attackOrderTarget = target;
+	}
+	
+	public void issueMoveOrder(Location moveLocation) {
+		
+		followingOrder = true;
+		timeSinceOrder = 0;
+		moveOrderLocation = moveLocation;
 	}
 	
 	/**
@@ -121,8 +161,5 @@ public class BehaviorController extends BukkitRunnable {
 		}
 		
 		sumo.targetEntity(closestEntity);
-		
-		if (distance < sumo.getAttackRange())
-			((LivingEntity) closestEntity).damage(sumo.getAttackDamage(), sumo.getEntity());
 	}
 }

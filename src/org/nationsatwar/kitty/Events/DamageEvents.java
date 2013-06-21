@@ -24,7 +24,7 @@ public final class DamageEvents implements Listener {
     	for (SumoObject sumo : plugin.sumoManager.getAllSumos())
     		if (sumo.getEntity().equals(event.getEntity())) {
     			
-    			sumo.behaviorController.resetTimeSinceStruck();
+    			sumo.behavior.resetTimeSinceStruck();
     			return;
     		}
     }
@@ -36,7 +36,7 @@ public final class DamageEvents implements Listener {
     	for (SumoObject sumo : plugin.sumoManager.getAllSumos())
     		if (sumo.getEntity().equals(event.getEntity())) {
     			
-    			sumo.behaviorController.cancel();
+    			sumo.behavior.cancel();
     			return;
     		}
     }

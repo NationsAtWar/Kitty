@@ -32,7 +32,7 @@ public final class SumoObject {
 	
 	private String sumoName;
 	
-	public BehaviorController behaviorController;
+	public BehaviorController behavior;
 	
 	public boolean isEngaged = false;
 	
@@ -51,8 +51,8 @@ public final class SumoObject {
 		
 		this.sumoName = sumoName;
     	
-		behaviorController = new BehaviorController(plugin, this);
-		behaviorController.runTaskTimer(plugin, 0, 20);
+		behavior = new BehaviorController(plugin, this);
+		behavior.runTaskTimer(plugin, 0, 20);
 		
 		loadConfigProperties();
 	}
@@ -233,5 +233,10 @@ public final class SumoObject {
 			
 			setPath(targetEntity.getLocation());
 		}
+		
+		double distance = entity.getLocation().distance(targetEntity.getLocation());
+		
+		if (distance < attackRange)
+			((LivingEntity) targetEntity).damage(attackDamage, entity);
 	}
 }
