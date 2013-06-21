@@ -18,7 +18,7 @@
 	<dependency>
 		<groupId>org.bukkit</groupId>
 		<artifactId>minecraft-server</artifactId>
-		<version>1.5.3</version>
+		<version>1.5.2</version>
 	</dependency>
   </dependencies>
   <build>
@@ -43,4 +43,4 @@
   </build>
 </project>
 <build>
-	</build>
+</build>
