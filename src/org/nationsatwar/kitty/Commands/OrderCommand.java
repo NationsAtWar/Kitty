@@ -42,8 +42,6 @@ public final class OrderCommand {
 		
 		for (SumoObject sumo : plugin.sumoManager.getPlayerSumos(player.getName(), sumoName)) {
 			
-			Kitty.log(sumo.getSumoName());
-			
 			if (target != null) {
 				
 				sumo.behavior.issueAttackOrder(target);

@@ -2,6 +2,7 @@ package org.nationsatwar.kitty.Sumo;
 
 import java.io.File;
 
+import net.minecraft.server.v1_5_R3.EntityBat;
 import net.minecraft.server.v1_5_R3.EntityCreature;
 import net.minecraft.server.v1_5_R3.EntityFlying;
 import net.minecraft.server.v1_5_R3.EntityGhast;
@@ -11,8 +12,10 @@ import net.minecraft.server.v1_5_R3.PathEntity;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftBat;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftCreature;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
+import org.bukkit.entity.Bat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
@@ -52,7 +55,11 @@ public final class SumoObject {
 		this.sumoName = sumoName;
     	
 		behavior = new BehaviorController(plugin, this);
-		behavior.runTaskTimer(plugin, 0, 20);
+		
+		if (entity instanceof Bat)
+			behavior.runTaskTimer(plugin, 0, 5);
+		else
+			behavior.runTaskTimer(plugin, 0, 20);
 		
 		loadConfigProperties();
 	}
@@ -150,16 +157,31 @@ public final class SumoObject {
 	 */
 	public void setPath(Location location) {
 		
+		EntityLiving livingEntity = ((CraftLivingEntity) entity).getHandle();
+		
+		// Bats use a separate pathing system
+        if (livingEntity instanceof EntityBat) {
+        	
+        	EntityBat bat = ((CraftBat) entity).getHandle();
+        	bat.a(true);
+			
+			Vector vector = location.toVector().subtract(entity.getLocation().toVector()).normalize();
+			
+			bat.motX += vector.getX();
+			bat.motY += vector.getY();
+			bat.motZ += vector.getZ();
+			return;
+        }
+		
 		// Gets the nearest location that the pathing will allow
 		if (location.distance(entity.getLocation()) > maximumMoveRange) {
-
+			
 			Vector vector = location.toVector().subtract(entity.getLocation().toVector());
+			
 			vector.normalize().multiply(maximumMoveRange);
 			
 			location = entity.getLocation().add(vector);
 		}
-		
-		EntityLiving livingEntity = ((CraftLivingEntity) entity).getHandle();
 		
         PathEntity path = livingEntity.getNavigation().a(location.getX(), location.getY(), location.getZ());
         livingEntity.getNavigation().a(path, movementSpeed); // Sets new path

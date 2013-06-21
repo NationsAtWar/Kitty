@@ -13,6 +13,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.nationsatwar.kitty.Kitty;
+import org.nationsatwar.kitty.Utility.AIUtility;
 import org.nationsatwar.kitty.Utility.ConfigHandler;
 
 public class BehaviorController extends BukkitRunnable {
@@ -128,7 +129,9 @@ public class BehaviorController extends BukkitRunnable {
 	private void moveToPlayer() {
 		
 		Player master = sumo.getMaster();
-		sumo.setPath(master.getLocation());
+		Location randomizedLocation = AIUtility.randomizeLocation(master.getLocation(), 5);
+		
+		sumo.setPath(randomizedLocation);
 	}
 	
 	/**
