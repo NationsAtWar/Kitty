@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+import org.nationsatwar.kitty.Kitty;
 
 public final class AIUtility {
 
@@ -12,10 +13,8 @@ public final class AIUtility {
 	 */
 	public static Location randomizeLocation(Location origin, float radius) {
 		
-		Random randomGenerator = new Random();
-		
-		float random1 = (randomGenerator.nextFloat() - 0.5f) * 2 * radius;
-		float random2 = (randomGenerator.nextFloat() - 0.5f) * 2 * radius;
+		float random1 = getRandomNumber(-1, 1) * radius;
+		float random2 = getRandomNumber(-1, 1) * radius;
 		
 		Location newLocation = origin.clone();
 		
@@ -28,12 +27,34 @@ public final class AIUtility {
 		if (origin.distance(highestBlock) <= radius)
 			newLocation = highestBlock;
 		
+		float debugNumber = 0;
+		
 		while (!newLocation.getBlock().isEmpty()) {
-
+			
 			Vector vector = origin.toVector().subtract(newLocation.toVector()).normalize();
 			newLocation = newLocation.add(vector);
+			
+			debugNumber++;
+			if (debugNumber > 20) {
+				
+				Kitty.log("While Loop going on way too long");
+				break;
+			}
 		}
 		
 		return newLocation;
+	}
+	
+	public static float getRandomNumber(float minNumber, float maxNumber) {
+		
+		Random randomGenerator = new Random();
+
+		float randomNumber = randomGenerator.nextFloat();
+		float difference = maxNumber - minNumber;
+
+		randomNumber *= difference;
+		randomNumber += minNumber;
+		
+		return randomNumber;
 	}
 }

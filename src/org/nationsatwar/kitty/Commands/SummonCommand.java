@@ -52,7 +52,7 @@ public final class SummonCommand {
 	    // Returns if the Entity Type as specified in the config file is invalid
 		if (entityType == null) {
 	    	
-	    	player.sendMessage(ChatColor.YELLOW + "Entity Type for: " + sumoName + "does not exist.");
+	    	player.sendMessage(ChatColor.YELLOW + "Entity Type for: " + sumoName + " does not exist.");
 	    	return;
 		}
 		

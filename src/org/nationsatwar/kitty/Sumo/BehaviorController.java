@@ -7,6 +7,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Bat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -23,12 +24,15 @@ public class BehaviorController extends BukkitRunnable {
 
 	private float engageRadius;
 	private List<EntityType> engageTypes;
+	
+	private float maxFollowRange = 8;
 
 	private int healthRegeneration;
 	private int healthRegenerationDelay;
 	
 	private int timeSinceStruck = 0;
 	private int timeSinceOrder = 0;
+	private int timeSinceAttack = 0;
 	
 	private boolean followingOrder;
 	
@@ -53,13 +57,14 @@ public class BehaviorController extends BukkitRunnable {
 		// Properties to adjust
 		timeSinceStruck++;
 		timeSinceOrder++;
+		timeSinceAttack++;
 		
 		// Regenerate Health
 		if (timeSinceStruck >= healthRegenerationDelay)
 			sumo.replenishHealth(healthRegeneration);
 		
 		// Orders last 10 seconds (TEMPORARY)
-		if (timeSinceOrder >= 10)
+		if (timeSinceOrder >= 40)
 			followingOrder = false;
 		
 		// Cancel behavior if following a specified order
@@ -129,9 +134,42 @@ public class BehaviorController extends BukkitRunnable {
 	private void moveToPlayer() {
 		
 		Player master = sumo.getMaster();
-		Location randomizedLocation = AIUtility.randomizeLocation(master.getLocation(), 5);
 		
-		sumo.setPath(randomizedLocation);
+		// Bats need to be constantly updated to work properly
+		if (sumo.getEntity() instanceof Bat) {
+			
+			Location moveLocation = AIUtility.randomizeLocation(master.getLocation(), maxFollowRange);
+			sumo.setPath(moveLocation);
+			return;
+		}
+		
+		double distanceToMaster = master.getLocation().distance(sumo.getEntity().getLocation());
+		
+		// Update location if the player is outside the follow range
+		if (distanceToMaster > maxFollowRange) {
+			
+			Location moveLocation = AIUtility.randomizeLocation(master.getLocation(), maxFollowRange);
+			sumo.setPath(moveLocation);
+			return;
+		}
+		
+		if (sumo.getDestinationLocation() == null)
+			return;
+		
+		double distanceToDestination = sumo.getDestinationLocation().distance(sumo.getEntity().getLocation());
+		
+		// If Sumo is just hanging around, then set a random chance that they'll 'wander' somewhere else
+		if (distanceToDestination < 3) {
+			
+			float randomNumber = AIUtility.getRandomNumber(0, 20);
+			
+			if (randomNumber < 1) {
+			
+				Location moveLocation = AIUtility.randomizeLocation(master.getLocation(), maxFollowRange);
+				sumo.setPath(moveLocation);
+				return;
+			}
+		}
 	}
 	
 	/**
@@ -163,6 +201,17 @@ public class BehaviorController extends BukkitRunnable {
 			}
 		}
 		
+		if (closestEntity == null)
+			return;
+		
 		sumo.targetEntity(closestEntity);
+
+		distance = sumo.getEntity().getLocation().distance(closestEntity.getLocation());
+		
+		if (distance < sumo.getAttackRange() && timeSinceAttack >= sumo.getAttackSpeed()) {
+			
+			((LivingEntity) closestEntity).damage(sumo.getAttackDamage(), sumo.getEntity());
+			timeSinceAttack = 0;
+		}
 	}
 }

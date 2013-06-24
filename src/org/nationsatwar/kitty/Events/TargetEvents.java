@@ -1,10 +1,8 @@
 package org.nationsatwar.kitty.Events;
 
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 
 import org.nationsatwar.kitty.Kitty;
 import org.nationsatwar.kitty.Sumo.SumoObject;
@@ -19,21 +17,13 @@ public final class TargetEvents implements Listener {
     }
     
     @EventHandler
-    private void onEntityTargetLivingEntity(EntityTargetLivingEntityEvent event) {
+    private void onEntityTarget(EntityTargetEvent event) {
     	
-    	// Cancel event if target is not a player
-    	if (!event.getTarget().getType().equals(EntityType.PLAYER))
-    		return;
-
-    	Player player = (Player) event.getTarget();
-    	SumoObject sumo = plugin.sumoManager.getEntitySumo(event.getEntity());
-    	
-    	// Cancel event if targeting entity is not a sumo
-    	if (sumo == null)
-    		return;
-    	
-    	// Cancel the target if the player is the Sumo's Master
-    	if (sumo.getMaster().equals(player))
-    		event.setTarget(null);
+    	for (SumoObject sumo : plugin.sumoManager.getAllSumos())
+    		if (sumo.getEntity().equals(event.getEntity())) {
+    			
+        		event.setCancelled(true);
+    			return;
+    		}
     }
 }

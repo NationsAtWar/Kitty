@@ -15,13 +15,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftBat;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftCreature;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
-import org.bukkit.entity.Bat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
+
 import org.nationsatwar.kitty.Kitty;
 import org.nationsatwar.kitty.Utility.ConfigHandler;
 
@@ -39,12 +39,15 @@ public final class SumoObject {
 	
 	public boolean isEngaged = false;
 	
+	private Location destinationLocation;
+	
 	private int maxHealth;
 	
 	private float movementSpeed;
-	private float attackRange;
 	
+	private float attackRange;
 	private int attackDamage;
+	private float attackSpeed;
 	
 	public SumoObject(Kitty plugin, Entity entity, Player master, String sumoName) {
 		
@@ -56,10 +59,9 @@ public final class SumoObject {
     	
 		behavior = new BehaviorController(plugin, this);
 		
-		if (entity instanceof Bat)
-			behavior.runTaskTimer(plugin, 0, 5);
-		else
-			behavior.runTaskTimer(plugin, 0, 20);
+		behavior.runTaskTimer(plugin, 0, 5);
+		
+		destinationLocation = entity.getLocation();
 		
 		loadConfigProperties();
 	}
@@ -78,6 +80,11 @@ public final class SumoObject {
 	public String getSumoName() {
 		
 		return sumoName;
+	}
+	
+	public Location getDestinationLocation() {
+		
+		return destinationLocation;
 	}
 	
 	public float getMaxHealth() {
@@ -100,6 +107,11 @@ public final class SumoObject {
 		return attackDamage;
 	}
 	
+	public float getAttackSpeed() {
+		
+		return attackSpeed;
+	}
+	
 	public int getCurrentHealth() {
 
 		EntityLiving livingEntity = ((CraftLivingEntity) entity).getHandle();
@@ -118,6 +130,25 @@ public final class SumoObject {
 	}
 	
 	/**
+	 * Loads the Sumo's properties as specified by the Config file
+	 */
+	public void loadConfigProperties() {
+		
+		File sumoFile = new File(ConfigHandler.getFullSumoPath(sumoName));
+	    FileConfiguration sumoConfig = YamlConfiguration.loadConfiguration(sumoFile);
+	    
+	    maxHealth = (int) sumoConfig.getDouble(ConfigHandler.healthMax);
+	    
+	    movementSpeed = (float) ((float) sumoConfig.getDouble(ConfigHandler.statsMovementSpeed) / 100);
+	    attackRange = (float) sumoConfig.getDouble(ConfigHandler.statsAttackRange);
+	    attackDamage = (int) sumoConfig.getDouble(ConfigHandler.statsAttackDamage);
+	    attackSpeed = (float) sumoConfig.getDouble(ConfigHandler.statsAttackSpeed);
+
+		EntityLiving livingEntity = ((CraftLivingEntity) entity).getHandle();
+		livingEntity.setHealth(maxHealth);
+	}
+	
+	/**
 	 * Adds health to the Sumo, maxes out at max health
 	 * 
 	 * @param newHealth
@@ -133,37 +164,19 @@ public final class SumoObject {
 	}
 	
 	/**
-	 * Loads the Sumo's properties as specified by the Config file
-	 */
-	public void loadConfigProperties() {
-		
-		File sumoFile = new File(ConfigHandler.getFullSumoPath(sumoName));
-	    FileConfiguration sumoConfig = YamlConfiguration.loadConfiguration(sumoFile);
-	    
-	    maxHealth = (int) sumoConfig.getDouble(ConfigHandler.healthMax);
-	    
-	    movementSpeed = (float) ((float) sumoConfig.getDouble(ConfigHandler.statsMovementSpeed) / 100);
-	    attackRange = (float) sumoConfig.getDouble(ConfigHandler.statsAttackRange);
-	    attackDamage = (int) sumoConfig.getDouble(ConfigHandler.statsAttackDamage);
-
-		EntityLiving livingEntity = ((CraftLivingEntity) entity).getHandle();
-		livingEntity.setHealth(maxHealth);
-	}
-	
-	/**
 	 * Sets a new path for the Sumo to head towards
 	 * 
 	 * @param location The new location to head towards
 	 */
 	public void setPath(Location location) {
-		
+
+		destinationLocation = location;
 		EntityLiving livingEntity = ((CraftLivingEntity) entity).getHandle();
 		
 		// Bats use a separate pathing system
         if (livingEntity instanceof EntityBat) {
         	
         	EntityBat bat = ((CraftBat) entity).getHandle();
-        	bat.a(true);
 			
 			Vector vector = location.toVector().subtract(entity.getLocation().toVector()).normalize();
 			
@@ -213,7 +226,7 @@ public final class SumoObject {
 	public void targetEntity(Entity targetEntity) {
 		
 		// If no appropriate entity is found, cancel targets
-		if (targetEntity == null) {
+		if (!targetEntity.isValid() || targetEntity == null) {
 			
 			isEngaged = false;
 			
@@ -255,10 +268,5 @@ public final class SumoObject {
 			
 			setPath(targetEntity.getLocation());
 		}
-		
-		double distance = entity.getLocation().distance(targetEntity.getLocation());
-		
-		if (distance < attackRange)
-			((LivingEntity) targetEntity).damage(attackDamage, entity);
 	}
 }
