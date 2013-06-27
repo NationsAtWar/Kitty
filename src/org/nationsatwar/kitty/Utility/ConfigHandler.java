@@ -44,32 +44,32 @@ public final class ConfigHandler {
 			sumoDirectory.mkdir();
 		
 		// Create default Sumo Files
-		createSumoFile("Bat");
-		createSumoFile("Blaze");
-		createSumoFile("Cave_Spider");
-		createSumoFile("Chicken");
-		createSumoFile("Cow");
-		createSumoFile("Creeper");
-		createSumoFile("Ender_Dragon");
-		createSumoFile("Enderman");
-		createSumoFile("Ghast");
-		createSumoFile("Giant");
-		createSumoFile("Iron_Golem");
-		createSumoFile("Mushroom_Cow");
-		createSumoFile("Ocelot");
-		createSumoFile("Pig");
-		createSumoFile("Pig_Zombie");
-		createSumoFile("Sheep");
-		createSumoFile("Skeleton");
-		createSumoFile("Slime");
-		createSumoFile("Snowman");
-		createSumoFile("Spider");
-		createSumoFile("Squid");
-		createSumoFile("Villager");
-		createSumoFile("Witch");
-		createSumoFile("Wither");
-		createSumoFile("Wolf");
-		createSumoFile("Zombie");
+		createSumoFile("bat");
+		createSumoFile("blaze");
+		createSumoFile("cave_Spider");
+		createSumoFile("chicken");
+		createSumoFile("cow");
+		createSumoFile("creeper");
+		createSumoFile("ender_Dragon");
+		createSumoFile("enderman");
+		createSumoFile("ghast");
+		createSumoFile("giant");
+		createSumoFile("iron_Golem");
+		createSumoFile("mushroom_Cow");
+		createSumoFile("ocelot");
+		createSumoFile("pig");
+		createSumoFile("pig_Zombie");
+		createSumoFile("sheep");
+		createSumoFile("skeleton");
+		createSumoFile("slime");
+		createSumoFile("snowman");
+		createSumoFile("spider");
+		createSumoFile("squid");
+		createSumoFile("villager");
+		createSumoFile("witch");
+		createSumoFile("wither");
+		createSumoFile("wolf");
+		createSumoFile("zombie");
 	}
 
 	/**
