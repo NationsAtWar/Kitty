@@ -36,6 +36,8 @@ public final class SummonCommand {
 		
 		sumoName = sumoName.toLowerCase();
 		
+		Kitty.log("Debug: " + ConfigHandler.getFullSumoPath(sumoName));
+		
 	    File sumoFile = new File(ConfigHandler.getFullSumoPath(sumoName));
 	    
 	    // Returns if the sumoFile does not exist

@@ -5,7 +5,7 @@ version: 1.0
 commands:
   kitty:
     description: Displays all Kitty commands.
-    permission: iSpy.basic
+    permission: Kitty.basic
     usage: /<command>
     
 permissions:

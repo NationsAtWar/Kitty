@@ -17,7 +17,7 @@ import org.nationsatwar.kitty.Utility.ConfigHandler;
  */
 public final class Kitty extends JavaPlugin {
 	
-	public final CommandParser commandParser = new CommandParser(this);;
+	public final CommandParser commandParser = new CommandParser(this);
 	public final SumoManager sumoManager = new SumoManager(this);
 	
 	private static final Logger log = Logger.getLogger("Minecraft");
